@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>File Upload</title>
+</head>
+<body>
+  <form id="uploadForm" enctype="multipart/form-data">
+    <input type="file" id="fileInput" name="file">
+    <button type="submit">Upload</button>
+  </form>
+  <script>
+    const { ipcRenderer } = require('electron');
+
+    document.getElementById('uploadForm').addEventListener('submit', (event) => {
+      event.preventDefault();
+      const fileInput = document.getElementById('fileInput');
+      const file = fileInput.files[0];
+      
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function() {
+          ipcRenderer.send('file-upload', { name: file.name, content: reader.result });
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  </script>
+</body>
+</html>
